@@ -79,15 +79,18 @@ public class Board {
 
     // TODO
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public boolean isValidElection(Pair<Point,Point> line){
+    public MoveState isValidElection(Pair<Point,Point> line){
+        MoveState moveState = new MoveState();
         AtomicBoolean isValid = new AtomicBoolean(true);
 
-        // Check if it is a valid line
+        // Not valid move -> PA must be different from PB
 
-        // Check if the line is between adjacent points
+        // Not a valid move -> The distance between PA and PB is greater than 1 or they points are in diagonal.
 
+        // Not a valid move ->  The line is owned by the other player
 
-        return isValid.get();
+        moveState.isValid = isValid.get();
+        return moveState;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

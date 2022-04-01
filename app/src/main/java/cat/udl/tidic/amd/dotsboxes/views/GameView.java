@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
+import cat.udl.tidic.amd.dotsboxes.models.MoveState;
 import cat.udl.tidic.amd.dotsboxes.models.Player;
 import cat.udl.tidic.amd.dotsboxes.models.Square;
 import cat.udl.tidic.amd.dotsboxes.viewmodels.GameViewModel;
@@ -98,6 +99,8 @@ public class GameView extends View {
                 canvas.drawCircle(p1.x,p1.y,30, paint );
                 canvas.drawCircle(p2.x,p2.y,30, paint );
             });
+
+
             if (square.isCompleted().get()){
 
                 paint.setTextSize(300);
@@ -136,7 +139,7 @@ public class GameView extends View {
         int y = (int) event.getY();
         Point current = new Point();
         current.set(x, y);
-
+        Log.d("GameView", game.currentPlayer().getName());
         Point p = board.getPoint(current);
 
         // The point is valid p is different of null
@@ -144,10 +147,13 @@ public class GameView extends View {
             if (game.currentPlayer().election == null) {
                 // First click
                 game.currentPlayer().election = new Pair<>(p, new Point());
+                Log.d("GameView", game.currentPlayer().election.toString());
             } else {
                 //Second click
                 game.currentPlayer().election.second.set(p.x, p.y);
-                if (board.isValidElection(game.currentPlayer().election)) {
+                Log.d("GameView", game.currentPlayer().election.toString());
+                MoveState moveState = board.isValidElection(game.currentPlayer().election);
+                if (moveState.isValid) {
                     // if no square -> update->False and endTurn=True
                     // if square -> update -> True and endTurn=False
                     endTurn=!board.update(game.currentPlayer());
