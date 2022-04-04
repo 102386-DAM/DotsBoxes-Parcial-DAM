@@ -6,19 +6,24 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ComponentActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
@@ -29,11 +34,17 @@ import cat.udl.tidic.amd.dotsboxes.viewmodels.GameViewModel;
 
 public class GameView extends View {
 
+    GameActivity ga = (GameActivity)this.getContext();
+
     static String TAG = "GameView";
     static int M=4;
     static int N=4;
 
     GameViewModel gameViewModel;
+    GameActivity gameActivity;
+
+    int p1s = 0;
+    int p2s = 0;
 
     Game game;
     Board board;
@@ -48,6 +59,10 @@ public class GameView extends View {
     public GameView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         points = new ArrayList<>();
+
+        //Log.d("GameView", game.currentPlayer().getName());
+        //gameActivity.updateScore(game.currentPlayer().getName());
+        //ga.updateScore(game.currentPlayer().getName());
 
         //init board
         board = new Board(M,N);
@@ -65,6 +80,7 @@ public class GameView extends View {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onDraw(Canvas canvas) {
+
         super.onDraw(canvas);
 
         if (game.currentPlayer() == null){
@@ -102,7 +118,6 @@ public class GameView extends View {
 
 
             if (square.isCompleted().get()){
-
                 paint.setTextSize(300);
                 paint.setColor(square.getOwner().getColor());
 
@@ -116,9 +131,12 @@ public class GameView extends View {
         if (game.currentPlayer() == null){
             //@Random choiche
             game.playerBlue.setPlaying(true);
+            ga.updateScore(game.currentPlayer().getName());
         }else{
             if (endTurn){
                 game.nextPlayer();
+                ga.updateScore(game.currentPlayer().getName());
+
             }
         }
     }
@@ -153,6 +171,7 @@ public class GameView extends View {
                 game.currentPlayer().election.second.set(p.x, p.y);
                 Log.d("GameView", game.currentPlayer().election.toString());
                 MoveState moveState = board.isValidElection(game.currentPlayer().election);
+                Log.d("AAAAA x:", moveState.isValid.toString());
                 if (moveState.isValid) {
                     // if no square -> update->False and endTurn=True
                     // if square -> update -> True and endTurn=False
@@ -160,8 +179,10 @@ public class GameView extends View {
 
                     if (!endTurn){
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
+                        ga.updateScorePoints(game.playerBlue.getSquares(), game.playerRed.getSquares());
                     }
                 }else{
+                    ga.toast();
                     endTurn=false;
                 }
 
@@ -174,7 +195,10 @@ public class GameView extends View {
         return false;
     }
 
-    public void setGameViewModel(GameViewModel gameViewModel){
+    public void setGameViewModel(GameViewModel gameViewModel, GameActivity gameActivity){
+    //public void setGameViewModel(GameViewModel gameViewModel){
         this.gameViewModel = gameViewModel;
+        this.gameActivity = gameActivity;
     }
+
 }

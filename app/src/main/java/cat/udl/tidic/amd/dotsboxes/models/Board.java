@@ -82,6 +82,27 @@ public class Board {
     public MoveState isValidElection(Pair<Point,Point> line){
         MoveState moveState = new MoveState();
         AtomicBoolean isValid = new AtomicBoolean(true);
+        Point pa = line.first;
+        Point pb = line.second;
+
+        Log.d("AAAAAAA x:", String.valueOf(pa.y-pb.y));
+
+        if(!pa.equals(pb)) {
+            if((pa.x-pb.x == 257 && pa.y-pb.y==0) || (pa.x-pb.x == -257 && pa.y-pb.y==0) || (pa.y-pb.y == 355 && pa.x-pb.x==0) || (pa.y-pb.y == -355 && pa.x-pb.x==0)){
+                isValid.set(true);
+                moveState.isValid = isValid.get();
+                return moveState;
+            } else {
+                isValid.set(false);
+                moveState.isValid = isValid.get();
+                return moveState;
+            }
+
+        } else {
+            isValid.set(false);
+            moveState.isValid = isValid.get();
+            return moveState;
+        }
 
         // Not valid move -> PA must be different from PB
 
@@ -89,8 +110,6 @@ public class Board {
 
         // Not a valid move ->  The line is owned by the other player
 
-        moveState.isValid = isValid.get();
-        return moveState;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
