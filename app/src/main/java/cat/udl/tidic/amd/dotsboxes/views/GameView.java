@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -163,6 +164,8 @@ public class GameView extends View {
                     }
                 }else{
                     endTurn=false;
+                    //REQUISIT 4. Si el moviment es invalid, faig un Toast
+                    Toast.makeText(getContext(),moveState.message,Toast.LENGTH_LONG).show();
                 }
 
                 invalidate();
