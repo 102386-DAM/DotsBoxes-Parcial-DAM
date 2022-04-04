@@ -1,6 +1,9 @@
 package cat.udl.tidic.amd.dotsboxes.views;
 
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,7 +14,10 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
@@ -19,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+import cat.udl.tidic.amd.dotsboxes.R;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
@@ -33,10 +41,13 @@ public class GameView extends View {
     static int M=4;
     static int N=4;
 
+
     GameViewModel gameViewModel;
 
     Game game;
     Board board;
+
+    GameActivity ga;
 
     private int yDistance;
     private int xDistance;
@@ -135,6 +146,8 @@ public class GameView extends View {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean onTouchEvent(MotionEvent event) {
+
+
         int x = (int) event.getX();
         int y = (int) event.getY();
         Point current = new Point();
@@ -153,15 +166,20 @@ public class GameView extends View {
                 game.currentPlayer().election.second.set(p.x, p.y);
                 Log.d("GameView", game.currentPlayer().election.toString());
                 MoveState moveState = board.isValidElection(game.currentPlayer().election);
-                if (moveState.isValid) {
+                if (moveState.isValid && validatePlay()) {
+
                     // if no square -> update->False and endTurn=True
                     // if square -> update -> True and endTurn=False
                     endTurn=!board.update(game.currentPlayer());
 
                     if (!endTurn){
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
+                    } else{
+                        //NO SOLUCIONAT A CLASE:
+                        //ga.getData(game.currentPlayer().getName());
                     }
                 }else{
+                    ga.noValid();
                     endTurn=false;
                 }
 
@@ -170,11 +188,41 @@ public class GameView extends View {
                 game.currentPlayer().election = null;
             }
         }
+
+
+        //NO FUNCIONA PROVAT A CLASSE:
+        // GameActivity gAct = (GameActivity) this.getContext();
+
+        Log.d("jugador actual: ", game.currentPlayer().getName());
+        Log.d("puntuacio jugador: ", String.valueOf(game.currentPlayer().getSquares()));
+
+        //ga.getData(game.currentPlayer().getName());
+
         performClick();
         return false;
+
     }
 
-    public void setGameViewModel(GameViewModel gameViewModel){
+    public void setGameViewModel(GameViewModel gameViewModel, GameActivity gameActivity){
         this.gameViewModel = gameViewModel;
+        this.ga = gameActivity;
+
+    }
+
+    private boolean validatePlay(){
+
+        //si el jugador fa click en 2 adj
+        String s = game.currentPlayer().election.toString();
+        int y = game.currentPlayer().election.first.y;
+
+        Log.d("x", s);
+        Log.d("y", String.valueOf(y));
+
+
+        //si fa diagonal
+        //si ja hi ha linea
+        //si els punts no stan  lliures
+
+        return true;
     }
 }
