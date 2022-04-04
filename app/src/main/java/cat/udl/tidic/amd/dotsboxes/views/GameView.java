@@ -11,29 +11,30 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
 import cat.udl.tidic.amd.dotsboxes.models.MoveState;
-import cat.udl.tidic.amd.dotsboxes.models.Player;
 import cat.udl.tidic.amd.dotsboxes.models.Square;
 import cat.udl.tidic.amd.dotsboxes.viewmodels.GameViewModel;
 
 public class GameView extends View {
 
     static String TAG = "GameView";
-    static int M=4;
-    static int N=4;
+    static int M=3;
+    static int N=3;
 
     GameViewModel gameViewModel;
+    GameActivity ga;
 
     Game game;
     Board board;
@@ -59,6 +60,9 @@ public class GameView extends View {
         paint = new Paint();
 
         game = new Game(board);
+
+        GameActivity ga = (GameActivity) this.getContext();
+        this.ga = ga;
     }
 
 
@@ -105,7 +109,9 @@ public class GameView extends View {
 
                 paint.setTextSize(300);
                 paint.setColor(square.getOwner().getColor());
-
+                square.getOwner().setSquares(square.getOwner().getSquares()+1);  //Aumenta en +1 el nuemero de cuadrados del jugador
+                Toast.makeText(getContext(), "Se ha incrementado en +1 al jugador: " + square.getOwner().alias, Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "El numero total de cuadrados del jugador: " + square.getOwner().alias + " es: " + square.getOwner().getSquares(), Toast.LENGTH_LONG).show();
                 canvas.drawText(square.getOwner().alias,
                         square.getP2().x + xDistance/7,
                         square.getP2().y - yDistance/5, paint);
@@ -174,7 +180,8 @@ public class GameView extends View {
         return false;
     }
 
-    public void setGameViewModel(GameViewModel gameViewModel){
+    public void setGameViewModel(GameActivity GameActivity){
         this.gameViewModel = gameViewModel;
+        this.ga = GameActivity;
     }
 }

@@ -21,7 +21,6 @@ public class GameActivity extends AppCompatActivity {
 
         initDataBinding();
         gameView = (GameView) findViewById(R.id.gameView);
-        //
 
     }
 

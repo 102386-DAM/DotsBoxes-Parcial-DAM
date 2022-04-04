@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -84,8 +85,16 @@ public class Board {
         AtomicBoolean isValid = new AtomicBoolean(true);
 
         // Not valid move -> PA must be different from PB
+        if (line.first == line.second){
+            isValid.set(false);
+            //Toast.makeText(getContext(), "No puedes escoger el mismo punto! Debe de ser un punto diferente", Toast.LENGTH_LONG).show();
+        }
 
         // Not a valid move -> The distance between PA and PB is greater than 1 or they points are in diagonal.
+        /*if (line.second - line.first >= 1) {
+            //isValid.set(false);
+            //Toast.makeText(getContext(), "No puedes escoger el mismo punto! Debe de ser un punto diferente", Toast.LENGTH_LONG).show();
+        }*/
 
         // Not a valid move ->  The line is owned by the other player
 
