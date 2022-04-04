@@ -21,12 +21,16 @@ public class GameActivity extends AppCompatActivity {
 
         initDataBinding();
         gameView = (GameView) findViewById(R.id.gameView);
-        //
+
 
     }
 
     //TODO
     private void initDataBinding() {
+        gameViewModel = new GameViewModel();
+
+        gameViewModel.init();
+        //gameView.setGameViewModel(gameViewModel, this);
     }
     //
 }

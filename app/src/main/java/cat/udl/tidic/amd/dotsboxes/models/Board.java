@@ -83,6 +83,23 @@ public class Board {
         MoveState moveState = new MoveState();
         AtomicBoolean isValid = new AtomicBoolean(true);
 
+        isValid.set(false);
+
+        if (!line.first.equals(line.second)){
+            if (line.first.x == line.second.x || line.first.y == line.second.y) {
+                if (Math.abs(line.first.x - line.second.x) <= this.xDistance && Math.abs(line.first.y - line.second.y) <= this.yDistance) {
+                    isValid.set(true);
+                } else {
+                    moveState.message = "The distance between PA and PB is greater than 1 or they points are in diagonal.";
+                }
+            } else {
+                moveState.message = "The distance between PA and PB is greater than 1 or they points are in diagonal.";
+            }
+        } else {
+            moveState.message = "PA must be different from PB";
+        }
+
+
         // Not valid move -> PA must be different from PB
 
         // Not a valid move -> The distance between PA and PB is greater than 1 or they points are in diagonal.

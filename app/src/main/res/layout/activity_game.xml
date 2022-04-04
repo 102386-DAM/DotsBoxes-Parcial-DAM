@@ -3,12 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--
     <data>
         <variable
             name="gameViewModel"
             type="cat.udl.tidic.amd.dotsboxes.viewmodels.GameViewModel" />
-    </data>-->
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -59,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="serif"
-            android:text="Current Player"
+            android:text="@={gameViewModel.getGame().currentPlayer().name}"
             android:textAlignment="center"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"

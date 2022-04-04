@@ -11,6 +11,8 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+import cat.udl.tidic.amd.dotsboxes.R;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
@@ -34,8 +38,9 @@ public class GameView extends View {
     static int N=4;
 
     GameViewModel gameViewModel;
+    GameActivity gameActivity;
 
-    Game game;
+    public Game game;
     Board board;
 
     private int yDistance;
@@ -44,6 +49,7 @@ public class GameView extends View {
    private boolean endTurn=false;
    protected Paint paint;
 
+    //GameActivity ga = (GameActivity) this.getContext();
 
     public GameView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -160,8 +166,13 @@ public class GameView extends View {
 
                     if (!endTurn){
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
+                        final TextView scoreBluePlayer = (TextView) findViewById(R.id.pointsP1TV);
+                        scoreBluePlayer.setText(game.playerBlue.getSquares());
+                        final TextView scoreRedPlayer = (TextView) findViewById(R.id.pointsP2TV);
+                        scoreRedPlayer.setText(game.playerRed.getSquares());
                     }
                 }else{
+                    Toast.makeText(getContext(), moveState.message, Toast.LENGTH_SHORT).show();
                     endTurn=false;
                 }
 
@@ -174,7 +185,8 @@ public class GameView extends View {
         return false;
     }
 
-    public void setGameViewModel(GameViewModel gameViewModel){
+    public void setGameViewModel(GameViewModel gameViewModel, GameActivity gameActivity){
         this.gameViewModel = gameViewModel;
+        this.gameActivity = gameActivity;
     }
 }
