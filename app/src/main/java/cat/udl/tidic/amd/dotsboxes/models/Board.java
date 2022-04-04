@@ -84,8 +84,18 @@ public class Board {
         AtomicBoolean isValid = new AtomicBoolean(true);
 
         // Not valid move -> PA must be different from PB
+        if(line.first.equals(line.second)){
+            moveState.message = "Punts han de ser diferents.";
+            isValid = new AtomicBoolean(false);
+        }
+
+        int inc_x = Math.abs(line.first.x - line.second.x);
+        int inc_y = Math.abs(line.first.y - line.second.y);
+        if(inc_x == 0 && inc_y == 327){
 
         // Not a valid move -> The distance between PA and PB is greater than 1 or they points are in diagonal.
+
+        //if(line.first.)
 
         // Not a valid move ->  The line is owned by the other player
 
