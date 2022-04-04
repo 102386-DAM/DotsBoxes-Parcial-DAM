@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.util.Pair;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+
 public class Player {
 
     private String name;
@@ -28,6 +30,11 @@ public class Player {
 
     public void setSquares(int squares) {
         this.squares = squares;
+        if(name == "red"){
+            GameActivity.scorePlayer2.setText(squares+"");
+        }else{
+            GameActivity.scorePlayer1.setText(squares+"");
+        }
     }
 
     public String getName() {

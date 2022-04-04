@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+
 public class Board {
 
     private  static String TAG = "Board";
@@ -83,11 +85,37 @@ public class Board {
         MoveState moveState = new MoveState();
         AtomicBoolean isValid = new AtomicBoolean(true);
 
-        // Not valid move -> PA must be different from PB
+        //not valid move, same point
+        if(line.first.equals(line.second)){
+            moveState.isValid = !isValid.get();
+            GameActivity.createToast("Seleccionat el mateix punt 2 cops");
+            return moveState;
+        }
 
         // Not a valid move -> The distance between PA and PB is greater than 1 or they points are in diagonal.
 
-        // Not a valid move ->  The line is owned by the other player
+        int distx = Math.abs(line.first.x - line.second.x);
+        int disty = Math.abs(line.first.y - line.second.y);
+        if(distx >281 || disty>388 || disty + distx >388){
+            moveState.isValid = !isValid.get();
+            GameActivity.createToast("distancia major a 1 entre punts");
+            return moveState;
+        }
+
+        // Not a valid move ->  The line is owned by the other player (Or me?)
+        for (Square sq: squares) {
+            for(Line l : sq.lines){
+                if((l.PA.equals(line.first) && l.PB.equals(line.second)) ||
+                        (l.PA.equals(line.second) && l.PB.equals(line.first))){
+                    if (l.owner != null){
+                        moveState.isValid = !isValid.get();
+
+                        GameActivity.createToast("punts ja pintats");
+                        return moveState;
+                    }
+                }
+            }
+        }
 
         moveState.isValid = isValid.get();
         return moveState;

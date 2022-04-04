@@ -7,6 +7,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+
 public class Game {
 
     private static String TAG = "GameModel";
@@ -25,9 +27,11 @@ public class Game {
         if (currentPlayer().equals(playerRed)){
             playerRed.setPlaying(false);
             playerBlue.setPlaying(true);
+            GameActivity.currentPlayer.setText("Current Player: P1");
         }else{
             playerRed.setPlaying(true);
             playerBlue.setPlaying(false);
+            GameActivity.currentPlayer.setText("Current Player: P2");
         }
 
     }

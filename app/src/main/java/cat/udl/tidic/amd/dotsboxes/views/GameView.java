@@ -1,6 +1,7 @@
 package cat.udl.tidic.amd.dotsboxes.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,11 +15,14 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+import cat.udl.tidic.amd.dotsboxes.RepeatDialogFragment;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
@@ -35,7 +39,7 @@ public class GameView extends View {
 
     GameViewModel gameViewModel;
 
-    Game game;
+    public Game game;
     Board board;
 
     private int yDistance;
@@ -171,7 +175,25 @@ public class GameView extends View {
             }
         }
         performClick();
+        for(Square sq : board.getSquares()){
+            if(sq.getOwner() == null){
+                return false;
+            }
+        }
+        //s'ha acabat la aplicacio
+
+        //GameActivity.intentChangeStart();
+        int scoreP2 = Integer.parseInt((String) GameActivity.scorePlayer2.getText());
+        int scoreP1 = Integer.parseInt((String) GameActivity.scorePlayer1.getText());
+        String winner ="";
+        if(scoreP1>scoreP2){
+            winner = "P1";
+        }else{
+            winner = "P2";
+        }
+        GameActivity.createDialog(winner);
         return false;
+
     }
 
     public void setGameViewModel(GameViewModel gameViewModel){
