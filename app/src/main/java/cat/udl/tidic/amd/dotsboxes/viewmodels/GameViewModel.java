@@ -8,5 +8,4 @@ import cat.udl.tidic.amd.dotsboxes.models.Game;
 // TODO
 public class GameViewModel extends ViewModel {
 
-
 }

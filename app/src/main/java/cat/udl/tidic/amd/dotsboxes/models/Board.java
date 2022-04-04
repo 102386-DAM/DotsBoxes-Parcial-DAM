@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class Board {
 
@@ -84,12 +85,26 @@ public class Board {
         AtomicBoolean isValid = new AtomicBoolean(true);
 
         // Not valid move -> PA must be different from PB
-
+        if (line.first.equals(line.second)){
+            moveState.isValid = false;
+            moveState.error = 1;
+        }
         // Not a valid move -> The distance between PA and PB is greater than 1 or they points are in diagonal.
-
+        if((line.first.x + line.second.x) > 1){
+            moveState.isValid = false;
+            moveState.error = 2;
+        }
         // Not a valid move ->  The line is owned by the other player
-
+        Line owned = new Line(line.first,line.second);
+        if (owned.getOwner() != null){
+            moveState.isValid = false;
+            moveState.error = 3;
+        }
+        else{
+            moveState.isValid = true;
+        }
         moveState.isValid = isValid.get();
+        Log.v(TAG, "isValid=" + moveState.isValid);
         return moveState;
     }
 
