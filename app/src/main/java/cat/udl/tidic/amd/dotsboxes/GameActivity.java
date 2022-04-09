@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +22,6 @@ public class GameActivity extends AppCompatActivity {
 
     protected GameView gameView;
     private  GameViewModel gameViewModel;
-    public String hola;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +35,6 @@ public class GameActivity extends AppCompatActivity {
         x.setTW((TextView)findViewById(R.id.currentPlayerTV));
     }
 
-
-
     public void updateScore(String player) {
         TextView torn = (TextView)findViewById(R.id.currentPlayerTV);
         torn.setText(player);
@@ -49,9 +47,11 @@ public class GameActivity extends AppCompatActivity {
         p2tw.setText(String.valueOf(p2));
     }
 
-    public void toast() {
-        Log.d("AAAAAAA x:", "A");
-        Toast.makeText(getApplicationContext(),"La línia no és vàlida. Torna a escollir els punts",Toast.LENGTH_SHORT).show();
+    public void checkScore(int p1, int p2) {
+        if (p1 + p2 >= 9) {
+            startActivity(new Intent(GameActivity.this, MainActivity.class));
+            finish();
+        }
     }
 
     //TODO

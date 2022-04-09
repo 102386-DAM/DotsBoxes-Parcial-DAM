@@ -60,10 +60,6 @@ public class GameView extends View {
         super(context, attrs);
         points = new ArrayList<>();
 
-        //Log.d("GameView", game.currentPlayer().getName());
-        //gameActivity.updateScore(game.currentPlayer().getName());
-        //ga.updateScore(game.currentPlayer().getName());
-
         //init board
         board = new Board(M,N);
 
@@ -180,9 +176,11 @@ public class GameView extends View {
                     if (!endTurn){
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
                         ga.updateScorePoints(game.playerBlue.getSquares(), game.playerRed.getSquares());
+                        //Mirem si acaba la partida
+                        ga.checkScore(game.playerBlue.getSquares(), game.playerRed.getSquares());
                     }
                 }else{
-                    ga.toast();
+                    Toast.makeText(getContext(), moveState.message, Toast.LENGTH_SHORT).show();
                     endTurn=false;
                 }
 
