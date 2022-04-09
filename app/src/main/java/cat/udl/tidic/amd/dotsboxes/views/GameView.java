@@ -9,8 +9,11 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -19,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+import cat.udl.tidic.amd.dotsboxes.R;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
@@ -34,7 +39,7 @@ public class GameView extends View {
     static int N=4;
 
     GameViewModel gameViewModel;
-
+    GameActivity gameActivity;
     Game game;
     Board board;
 
@@ -116,9 +121,13 @@ public class GameView extends View {
         if (game.currentPlayer() == null){
             //@Random choiche
             game.playerBlue.setPlaying(true);
+            // Agafem el primer jugador
+            gameActivity.changePlayer(game.currentPlayer().getName());
         }else{
             if (endTurn){
                 game.nextPlayer();
+                // Actualitzem cada torn el jugador.
+                gameActivity.changePlayer(game.currentPlayer().getName());
             }
         }
     }
@@ -131,8 +140,6 @@ public class GameView extends View {
         return true;
     }
 
-
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean onTouchEvent(MotionEvent event) {
         int x = (int) event.getX();
@@ -140,13 +147,14 @@ public class GameView extends View {
         Point current = new Point();
         current.set(x, y);
         Log.d("GameView", game.currentPlayer().getName());
-        Point p = board.getPoint(current);
 
+        Point p = board.getPoint(current);
         // The point is valid p is different of null
         if (p != null) {
             if (game.currentPlayer().election == null) {
                 // First click
                 game.currentPlayer().election = new Pair<>(p, new Point());
+
                 Log.d("GameView", game.currentPlayer().election.toString());
             } else {
                 //Second click
@@ -157,24 +165,36 @@ public class GameView extends View {
                     // if no square -> update->False and endTurn=True
                     // if square -> update -> True and endTurn=False
                     endTurn=!board.update(game.currentPlayer());
-
                     if (!endTurn){
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
                     }
-                }else{
-                    endTurn=false;
+                    // Actualitzem la puntuació
+                    gameActivity.updateScore(game.currentPlayer().getName(),game.currentPlayer().getSquares());
+                }else {
+                    Log.d("Error: ", "" + moveState.error);
+                    if (moveState.error == 1) {
+                        Toast.makeText(getContext(), "Not valid move -> PA must be different from PB", Toast.LENGTH_SHORT).show();
+                    } else if (moveState.error == 2) {
+                        Toast.makeText(getContext(), "Not a valid move -> They points are in diagonal.", Toast.LENGTH_SHORT).show();
+                    } else if (moveState.error == 3){
+                        Toast.makeText(getContext(), "Not a valid move -> The distance between PA and PB is greater than 1.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getContext(), "Not a valid move ->  The line is owned by the other player", Toast.LENGTH_SHORT).show();
+                    }
+                    endTurn = false;
                 }
-
                 invalidate();
                 // Reset election after second click
                 game.currentPlayer().election = null;
+                gameActivity.checkEnd(game.playerBlue.getSquares() , game.playerRed.getSquares());
             }
         }
         performClick();
         return false;
     }
 
-    public void setGameViewModel(GameViewModel gameViewModel){
+    public void setGameViewModel(GameViewModel gameViewModel, GameActivity gameActivity){
         this.gameViewModel = gameViewModel;
+        this.gameActivity = gameActivity;
     }
 }

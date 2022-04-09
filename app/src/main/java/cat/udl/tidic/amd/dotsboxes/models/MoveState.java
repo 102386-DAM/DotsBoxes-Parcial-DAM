@@ -4,7 +4,8 @@ public class MoveState {
 
     public String message;
     public Boolean isValid;
-
+    public int error;
     public MoveState() {
     }
+
 }
