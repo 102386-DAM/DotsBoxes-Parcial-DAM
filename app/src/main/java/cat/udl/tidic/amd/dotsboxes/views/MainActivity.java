@@ -18,12 +18,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Button playButton;
         playButton = findViewById(R.id.button);
+        Intent intent = new Intent(this, GameActivity.class);
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

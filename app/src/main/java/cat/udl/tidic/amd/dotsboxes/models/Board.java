@@ -80,32 +80,58 @@ public class Board {
 
     // TODO
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public MoveState isValidElection(Pair<Point,Point> line){
+    public MoveState isValidElection(Pair<Point,Point> line) {
         MoveState moveState = new MoveState();
         AtomicBoolean isValid = new AtomicBoolean(true);
 
         // Not valid move -> PA must be different from PB
-        if (line.first.equals(line.second)){
-            moveState.isValid = false;
-            moveState.error = 1;
+        if (!line.first.equals(line.second)) {
+            // They points are not in diagonal.
+            if (!(line.first.x != line.second.x && line.first.y != line.second.y)) {
+                // Not a valid move -> The distance between PA and PB is greater than 1.
+                if(Math.abs(line.first.x - line.second.x) != this.xDistance && line.first.y == line.second.y || Math.abs(line.first.y - line.second.y) != this.yDistance && line.first.x == line.second.x){
+                    // Distancia major que 1.
+                    isValid.set(false);
+                    Log.d("Error", "" + isValid.get());
+                    moveState.isValid = isValid.get();
+                    moveState.error = 3;
+                    return moveState;
+                }
+                // Distancia menor que 1.
+                else {
+                    for (Square x : squares) {
+                        for (Line l : x.lines) {
+                            if ((l.PA.equals(line.first) && l.PB.equals(line.second)) || (l.PA.equals(line.second) && l.PB.equals(line.first))) {
+                                // Not a valid move ->  The line is owned by the other player
+                                if (l.owner != null) {
+                                    isValid.set(false);
+                                    moveState.isValid = isValid.get();
+                                    moveState.error = 4;
+                                    return moveState;
+                                }
+                            }
+                        }
+                    }
+                    isValid.set(true);
+                    moveState.isValid = isValid.get();
+                    return moveState;
+                }
+            }
+            // Que estiguin en diagonal.
+            else{
+                isValid.set(false);
+                moveState.isValid = isValid.get();
+                moveState.error = 2;
+                return moveState;
+            }
         }
-        // Not a valid move -> The distance between PA and PB is greater than 1 or they points are in diagonal.
-        if((line.first.x + line.second.x) > 1){
-            moveState.isValid = false;
-            moveState.error = 2;
-        }
-        // Not a valid move ->  The line is owned by the other player
-        Line owned = new Line(line.first,line.second);
-        if (owned.getOwner() != null){
-            moveState.isValid = false;
-            moveState.error = 3;
-        }
+        // Que PA i PB siguen iguals.
         else{
-            moveState.isValid = true;
+            isValid.set(false);
+            moveState.isValid = isValid.get();
+            moveState.error = 1;
+            return moveState;
         }
-        moveState.isValid = isValid.get();
-        Log.v(TAG, "isValid=" + moveState.isValid);
-        return moveState;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

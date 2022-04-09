@@ -121,9 +121,13 @@ public class GameView extends View {
         if (game.currentPlayer() == null){
             //@Random choiche
             game.playerBlue.setPlaying(true);
+            // Agafem el primer jugador
+            gameActivity.changePlayer(game.currentPlayer().getName());
         }else{
             if (endTurn){
                 game.nextPlayer();
+                // Actualitzem cada torn el jugador.
+                gameActivity.changePlayer(game.currentPlayer().getName());
             }
         }
     }
@@ -135,8 +139,6 @@ public class GameView extends View {
         super.performClick();
         return true;
     }
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean onTouchEvent(MotionEvent event) {
@@ -165,24 +167,26 @@ public class GameView extends View {
                     endTurn=!board.update(game.currentPlayer());
                     if (!endTurn){
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
-                        //gameActivity.updateScore(game.currentPlayer().getName(),game.currentPlayer().getSquares());
-                    }else{
-
-                        //gameActivity.changePlayer(game.currentPlayer().getName());
                     }
+                    // Actualitzem la puntuació
+                    gameActivity.updateScore(game.currentPlayer().getName(),game.currentPlayer().getSquares());
                 }else {
+                    Log.d("Error: ", "" + moveState.error);
                     if (moveState.error == 1) {
-                        gameActivity.showToast(1);
+                        Toast.makeText(getContext(), "Not valid move -> PA must be different from PB", Toast.LENGTH_SHORT).show();
                     } else if (moveState.error == 2) {
-                        gameActivity.showToast(2);
-                    } else {
-                        gameActivity.showToast(3);
+                        Toast.makeText(getContext(), "Not a valid move -> They points are in diagonal.", Toast.LENGTH_SHORT).show();
+                    } else if (moveState.error == 3){
+                        Toast.makeText(getContext(), "Not a valid move -> The distance between PA and PB is greater than 1.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getContext(), "Not a valid move ->  The line is owned by the other player", Toast.LENGTH_SHORT).show();
                     }
                     endTurn = false;
                 }
                 invalidate();
                 // Reset election after second click
                 game.currentPlayer().election = null;
+                gameActivity.checkEnd(game.playerBlue.getSquares() , game.playerRed.getSquares());
             }
         }
         performClick();
