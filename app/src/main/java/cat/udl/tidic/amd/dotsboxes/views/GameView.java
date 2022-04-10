@@ -1,6 +1,7 @@
 package cat.udl.tidic.amd.dotsboxes.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cat.udl.tidic.amd.dotsboxes.GameActivity;
+import cat.udl.tidic.amd.dotsboxes.MainActivity;
 import cat.udl.tidic.amd.dotsboxes.R;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
@@ -49,7 +51,7 @@ public class GameView extends View {
    private boolean endTurn=false;
    protected Paint paint;
 
-    //GameActivity ga = (GameActivity) this.getContext();
+    GameActivity ga = (GameActivity) this.getContext();
 
     public GameView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -115,6 +117,8 @@ public class GameView extends View {
                 canvas.drawText(square.getOwner().alias,
                         square.getP2().x + xDistance/7,
                         square.getP2().y - yDistance/5, paint);
+                ga.isEnded(game);
+                ga.update(game);
             }
         });
 
@@ -127,6 +131,7 @@ public class GameView extends View {
                 game.nextPlayer();
             }
         }
+        ga.update(game);
     }
 
     @Override
@@ -166,10 +171,6 @@ public class GameView extends View {
 
                     if (!endTurn){
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
-                        final TextView scoreBluePlayer = (TextView) findViewById(R.id.pointsP1TV);
-                        scoreBluePlayer.setText(game.playerBlue.getSquares());
-                        final TextView scoreRedPlayer = (TextView) findViewById(R.id.pointsP2TV);
-                        scoreRedPlayer.setText(game.playerRed.getSquares());
                     }
                 }else{
                     Toast.makeText(getContext(), moveState.message, Toast.LENGTH_SHORT).show();
@@ -186,7 +187,8 @@ public class GameView extends View {
     }
 
     public void setGameViewModel(GameViewModel gameViewModel, GameActivity gameActivity){
-        this.gameViewModel = gameViewModel;
+       /* this.gameViewModel = gameViewModel;
         this.gameActivity = gameActivity;
+        */
     }
 }
