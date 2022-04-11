@@ -1,6 +1,7 @@
 package cat.udl.tidic.amd.dotsboxes.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +12,8 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -19,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cat.udl.tidic.amd.dotsboxes.GameActivity;
+import cat.udl.tidic.amd.dotsboxes.MainActivity;
+import cat.udl.tidic.amd.dotsboxes.R;
 import cat.udl.tidic.amd.dotsboxes.models.Board;
 import cat.udl.tidic.amd.dotsboxes.models.Game;
 import cat.udl.tidic.amd.dotsboxes.models.Line;
@@ -34,8 +40,9 @@ public class GameView extends View {
     static int N=4;
 
     GameViewModel gameViewModel;
+    GameActivity gameActivity;
 
-    Game game;
+    public Game game;
     Board board;
 
     private int yDistance;
@@ -44,6 +51,7 @@ public class GameView extends View {
    private boolean endTurn=false;
    protected Paint paint;
 
+    GameActivity ga = (GameActivity) this.getContext();
 
     public GameView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -109,6 +117,8 @@ public class GameView extends View {
                 canvas.drawText(square.getOwner().alias,
                         square.getP2().x + xDistance/7,
                         square.getP2().y - yDistance/5, paint);
+                ga.isEnded(game);
+                ga.update(game);
             }
         });
 
@@ -121,6 +131,7 @@ public class GameView extends View {
                 game.nextPlayer();
             }
         }
+        ga.update(game);
     }
 
     @Override
@@ -162,6 +173,7 @@ public class GameView extends View {
                         game.currentPlayer().setSquares(game.currentPlayer().getSquares() + 1);
                     }
                 }else{
+                    Toast.makeText(getContext(), moveState.message, Toast.LENGTH_SHORT).show();
                     endTurn=false;
                 }
 
@@ -174,7 +186,9 @@ public class GameView extends View {
         return false;
     }
 
-    public void setGameViewModel(GameViewModel gameViewModel){
-        this.gameViewModel = gameViewModel;
+    public void setGameViewModel(GameViewModel gameViewModel, GameActivity gameActivity){
+       /* this.gameViewModel = gameViewModel;
+        this.gameActivity = gameActivity;
+        */
     }
 }

@@ -15,8 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Board {
 
-    private  static String TAG = "Board";
-    private int xMargin, yMargin,  xDistance,yDistance;
+    private static String TAG = "Board";
+    private int xMargin, yMargin, xDistance, yDistance;
     private final List<Point> points;
     private final List<Square> squares;
     private final int M;
@@ -39,8 +39,8 @@ public class Board {
     public void build() {
 
         // Build points
-        int x=xMargin;
-        for(int r=0; r < M; r++) {
+        int x = xMargin;
+        for (int r = 0; r < M; r++) {
             int y = yMargin;
             for (int c = 0; c < N; c++) {
                 points.add(new Point(x, y));
@@ -62,7 +62,7 @@ public class Board {
             Point P4 = points.get(initSquareIndex + (N + 1));
             this.squares.add(new Square(P1, P2, P3, P4));
             initSquareIndex = initSquareIndex + 1;
-            initRowIndex = initRowIndex +1;
+            initRowIndex = initRowIndex + 1;
 
             if (initRowIndex == (N - 1)) {
                 initRowIndex = 0;
@@ -79,9 +79,53 @@ public class Board {
 
     // TODO
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public MoveState isValidElection(Pair<Point,Point> line){
+    public MoveState isValidElection(Pair<Point, Point> line) {
         MoveState moveState = new MoveState();
         AtomicBoolean isValid = new AtomicBoolean(true);
+        String m = "";
+        isValid.set(false);
+
+        // Per a avisar que no es pot seleccionar un mateix punt A i B
+        if (!line.first.equals(line.second)) {
+
+            // Per a avisar que no es pot tenir una linia diagonal.
+            if (line.first.x == line.second.x || line.first.y == line.second.y) {
+
+                // Per a avisar que només podem tenir linies d'un punt a un altre punt adjacent
+                if (Math.abs(line.first.x - line.second.x) <= this.xDistance && Math.abs(line.first.y - line.second.y) <= this.yDistance) {
+                    for (Square s : squares) {
+                        for (Line l : s.lines) {
+                            if ((l.getPA().equals(line.first) && l.getPB().equals(line.second)) || (l.getPA().equals(line.second) && l.getPB().equals(line.first)) ){
+                                if (l.getOwner() == null) {
+                                    isValid.set(true);
+                                    moveState.isValid = isValid.get();
+                                    Log.d("Board", String.valueOf(moveState.isValid));
+                                    return moveState;
+                                } else {
+                                    m = "The line is not empty.";
+                                    moveState.message = m;
+                                    Log.d("Board", m);
+                                }
+                            }
+                        }
+                    }
+
+                } else {
+                    m = "The distance between PA and PB is greater than 1.";
+                    moveState.message = m;
+                    Log.d("Board", m);
+                }
+            } else {
+                m = "The points are in diagonal.";
+                moveState.message = m;
+                Log.d("Board", m);
+            }
+        } else {
+            m = "PA must be different from PB";
+            moveState.message = m;
+            Log.d("Board", m);
+        }
+
 
         // Not valid move -> PA must be different from PB
 
@@ -90,15 +134,16 @@ public class Board {
         // Not a valid move ->  The line is owned by the other player
 
         moveState.isValid = isValid.get();
+        Log.d("Board", String.valueOf(moveState.isValid));
         return moveState;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public boolean update(Player player){
-        Line cl = new Line(player.election.first,player.election.second);
+    public boolean update(Player player) {
+        Line cl = new Line(player.election.first, player.election.second);
         AtomicBoolean squareIsCompleted = new AtomicBoolean();
         squareIsCompleted.set(false);
-        squares.forEach( (Square square) -> {
+        squares.forEach((Square square) -> {
             square.lines.forEach((Line l) -> {
                 if (l.equals(cl)) {
                     l.owner = player;
@@ -113,13 +158,13 @@ public class Board {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public Point getPoint(Point current){
+    public Point getPoint(Point current) {
         AtomicReference<Point> point = new AtomicReference<>();
         point.set(null);
         points.forEach((Point p) -> {
             // Check ->  needs to be a point of the board with
             // an accepted error around the threshold (30)
-            if ( ((current.x <= p.x + 30 && current.x >= p.x - 30)
+            if (((current.x <= p.x + 30 && current.x >= p.x - 30)
                     && (current.y <= p.y + 30 && current.y >= p.y - 30))
             ) {
                 point.set(p);
